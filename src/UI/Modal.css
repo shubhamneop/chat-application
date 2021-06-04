@@ -1,0 +1,81 @@
+.Modal {
+  position: fixed;
+  z-index: 500;
+  background-color: white;
+  width: 70%;
+  border: 1px solid #ccc;
+  box-shadow: 3px 4px #ff8100;
+  padding: 16px;
+  left: 15%;
+  top: 25%;
+  box-sizing: border-box;
+  transition: all 0.3s ease-out;
+  border-radius: 30px 5px;
+}
+
+.Modal .alert::-webkit-scrollbar {
+  display: none;
+}
+
+.alert {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.ModalOpen {
+  animation: openModal 0.4s ease-out forwards;
+}
+
+.ModalClosed {
+  animation: closeModal 1s ease-out forwards;
+}
+
+@media (min-width: 600px) {
+  .Modal {
+    width: 700px;
+    left: calc(50% - 250px);
+  }
+}
+
+@keyframes openModal {
+  0% {
+    opacity: 0;
+    transform: translateY(-100vh);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(90vh);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes closeModal {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 0.8;
+    transform: translateY(70vh);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-100vh);
+  }
+}
+
+.fade-slide-enter {
+  opacity: 0;
+}
+.fade-slide-enter-active {
+  animation: openModal 0.4s ease-out forwards;
+}
+.fade-slide-exit {
+  opacity: 1;
+}
+.fade-slide-exit-active {
+  animation: closeModal 0.4s ease-out forwards;
+}

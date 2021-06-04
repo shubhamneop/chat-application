@@ -1,0 +1,150 @@
+import React from "react";
+import Spinner from "../UI/Spinner";
+import { Link, withRouter } from "react-router-dom";
+import { auth, db } from "../firebase";
+
+class Register extends React.Component {
+  constructor() {
+    super();
+    this.state = {};
+    // alert("in construction");
+  }
+  user = {};
+
+  getEmail = (event) => {
+    this.user.email = event.target.value;
+  };
+  getPass = (event) => {
+    this.user.password = event.target.value;
+  };
+  getName = (event) => {
+    this.user.name = event.target.value;
+  };
+
+  validate = (elements) => {
+    var errors = {};
+
+    if (!elements.email.value) {
+      errors.email = "Plaese enter email";
+    } else if (elements.email.value) {
+      const pattern =
+        /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+      var isValid = pattern.test(elements.email.value);
+      if (!isValid) {
+        errors.email = "Plaese enter valid email";
+      }
+    }
+    if (!elements.name.value) {
+      errors.name = "Plaese enter name";
+    }
+    if (!elements.password.value) {
+      errors.password = "Plaese enter password";
+    }
+    var errorKeys = Object.keys(errors);
+    if (errorKeys.length > 0) {
+      return errors;
+    } else {
+      return false;
+    }
+  };
+
+  componentDidMount() {
+    auth.onAuthStateChanged((authUser) => {
+      console.log("auth user", authUser);
+      if (authUser) {
+        this.props.history.replace("/");
+      }
+    });
+  }
+
+  submit = (event) => {
+    event.preventDefault();
+    var form = document.getElementById("signupform");
+    var errors = this.validate(form.elements);
+
+    if (errors) {
+      this.setState({ errorMessage: errors });
+    } else {
+      auth
+        .createUserWithEmailAndPassword(this.user.email, this.user.password)
+        .then((authUser) => {
+          authUser.user.updateProfile({
+            displayName: this.user.name,
+            photoURL:
+              "https://cencup.com/wp-content/uploads/2019/07/avatar-placeholder.png",
+          });
+          db.collection("users").doc(auth.currentUser.uid).set({
+            id: auth.currentUser.uid,
+            name: this.user.name,
+            email: this.user.email,
+            photoURL:
+              "https://cencup.com/wp-content/uploads/2019/07/avatar-placeholder.png",
+          });
+        })
+        .catch((error) => alert(error.message));
+    }
+  };
+
+  render() {
+    const { loading } = this.props;
+    return (
+      <>
+        {loading ? (
+          <Spinner />
+        ) : (
+          <form id="signupform" className="custom-form">
+            <h2 style={{ textAlign: "center" }}>Sign Up</h2>
+            <div className="form-group">
+              <label>Email</label>
+              <input
+                type="email"
+                name="email"
+                className="form-control"
+                onChange={this.getEmail}
+              />
+              <span style={{ color: "red" }}>
+                {this.state.errorMessage?.email}
+              </span>
+            </div>
+            <div className="form-group">
+              <label>Name</label>
+              <input
+                type="text"
+                name="name"
+                className="form-control"
+                onChange={this.getName}
+              />
+              <span style={{ color: "red" }}>
+                {this.state.errorMessage?.name}
+              </span>
+            </div>
+            <div className="form-group">
+              <label>Password</label>
+              <input
+                type="password"
+                name="password"
+                className="form-control"
+                onChange={this.getPass}
+              />
+              <span style={{ color: "red" }}>
+                {this.state.errorMessage?.password}
+              </span>
+            </div>
+
+            <button className="btn btn-primary" onClick={this.submit}>
+              Signup
+            </button>
+            <br></br>
+
+            <div style={{ float: "left" }}>
+              <Link to="/login">Have a account? Click here</Link>
+            </div>
+            <br></br>
+          </form>
+        )}
+      </>
+    );
+  }
+}
+
+export default withRouter(Register);

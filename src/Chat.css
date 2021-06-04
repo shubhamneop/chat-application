@@ -1,0 +1,84 @@
+.main-chat {
+  flex: 1 1 0%;
+  background-color: white;
+  margin: 25px;
+  max-height: 400px;
+  overflow-x: scroll;
+  height: 400px;
+}
+.footer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 70vw;
+  padding: 15px;
+  bottom: 0;
+}
+
+.textIput {
+  bottom: 0 !important;
+  height: 40px !important;
+  flex: 1 !important;
+  background-color: #ececec;
+  color: gray !important;
+  border-radius: 30px;
+  width: 95vw;
+}
+.reciver {
+  padding: 15px;
+  background-color: #ececec;
+  align-self: flex-end;
+  border-radius: 20px;
+  margin-right: 15px;
+  max-width: 80%;
+  position: relative;
+  margin-bottom: 15px;
+}
+.sender {
+  padding: 15px;
+  background-color: #2b6be6;
+  align-self: flex-start;
+  border-radius: 20px;
+  margin-right: 15px !important;
+  max-width: 80%;
+  position: relative;
+  margin-bottom: 15px;
+}
+.senderName {
+  left: 10px !important;
+  padding-right: 10px !important;
+  font-size: 10px !important;
+  color: white;
+}
+.senderText {
+  color: white;
+  font-weight: 500;
+  margin-left: 10px !important;
+  margin-bottom: 15px !important;
+  word-break: break-all;
+}
+.recieverText {
+  color: black;
+  font-weight: 500;
+  margin-left: 10 !important;
+  word-break: break-all;
+}
+.main-chat::-webkit-scrollbar {
+  display: none;
+}
+
+.main-chat {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.item {
+  flex: 1 1 0%;
+  width: 70vw;
+  margin: 1rem 0;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  padding: 1rem;
+  background-color: #f7f5ef;
+  display: flex;
+  justify-content: space-between;
+}

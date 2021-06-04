@@ -1,25 +1,50 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import { Switch, Route } from "react-router-dom";
+import Login from "./screen/Login";
+import Register from "./screen/Register";
+import Home from "./Home";
+import Chat from "./Chat";
+import Navbar from "./Navbar";
+import { useEffect } from "react";
+import { auth } from "./firebase";
+import { connect, useDispatch } from "react-redux";
+import { LOGIN } from "./store/ActionType";
 
-function App() {
+function App(props) {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((authUser) => {
+      if (authUser) {
+        dispatch({ type: LOGIN, payload: authUser });
+      }
+    });
+    return unsubscribe;
+  }, []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Navbar />
+      <Switch>
+        <Route path="/" exact>
+          {props.isLogin ? <Home /> : <Login />}
+        </Route>
+        <Route path="/login" exact>
+          <Login />
+        </Route>
+        <Route path="/register" exact>
+          <Register />
+        </Route>
+        <Route path="/chat/:id" exact>
+          <Chat />
+        </Route>
+      </Switch>
+    </>
   );
 }
 
-export default App;
+const mapStateToProps = (state) => {
+  return {
+    isLogin: state.isLogin,
+  };
+};
+
+export default connect(mapStateToProps)(App);
