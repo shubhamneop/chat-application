@@ -5,3 +5,5 @@ export const SENDMESSAGE = "SENDMESSAGE";
 export const GETMESSAGE = "GETMESSAGE";
 export const USERS = "USERS";
 export const INIT = "INIT";
+export const LOGIN_FAIL = "LOGIN_FAIL";
+export const REGISTER_FAIL = "REGISTER_FAIL";

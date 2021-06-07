@@ -2,6 +2,8 @@ import React from "react";
 import Spinner from "../UI/Spinner";
 import { Link, withRouter } from "react-router-dom";
 import { auth, db } from "../firebase";
+import { connect } from "react-redux";
+import { REGISTER, REGISTER_FAIL } from "../store/ActionType";
 
 class Register extends React.Component {
   constructor() {
@@ -80,8 +82,12 @@ class Register extends React.Component {
             photoURL:
               "https://cencup.com/wp-content/uploads/2019/07/avatar-placeholder.png",
           });
+          this.props.dispatch({ type: REGISTER, payload: authUser });
         })
-        .catch((error) => alert(error.message));
+        .catch((error) => {
+          this.props.dispatch({ type: REGISTER_FAIL });
+          alert(error.message);
+        });
     }
   };
 
@@ -147,4 +153,11 @@ class Register extends React.Component {
   }
 }
 
-export default withRouter(Register);
+const mapStateToProps = (state) => {
+  return {
+    loading: state?.loading,
+    isLogin: state?.isLogin,
+  };
+};
+
+export default connect()(withRouter(Register));

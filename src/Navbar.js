@@ -2,7 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { NavLink, withRouter } from "react-router-dom";
 import { auth } from "./firebase";
-import { INIT, LOGOUT } from "./store/ActionType";
+import { LOGOUT } from "./store/ActionType";
 
 function Navbar(props) {
   const signOutUser = () => {

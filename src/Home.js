@@ -45,7 +45,7 @@ const Home = (props) => {
         <ul className="main">
           {users.length > 0 &&
             users.map(({ id, data: { name, photoURL } }) => (
-              <li key={id} onClick={() => chat(id)} className="item ">
+              <li key={id} onClick={() => chat(id)} className="items">
                 <img src={photoURL} width="50px" height="50px" /> {name}
               </li>
             ))}

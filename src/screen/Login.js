@@ -1,13 +1,13 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { Link, withRouter } from "react-router-dom";
 import { auth } from "../firebase";
-import { INIT, LOGIN } from "../store/ActionType";
+import { INIT, LOGIN, LOGIN_FAIL } from "../store/ActionType";
 import Spinner from "../UI/Spinner";
 
 function Login(props) {
   const [user, setUser] = useState({});
-  const { loading, history, dispatch } = props;
+  const { loading, isLogin, history, dispatch } = props;
 
   let getEmail = (event) => {
     setUser({ ...user, email: event.target.value });
@@ -16,10 +16,10 @@ function Login(props) {
     setUser({ ...user, password: event.target.value });
   };
   useEffect(() => {
-    if (localStorage.token) {
+    if (isLogin) {
       history.push("/");
     }
-  }, [history]);
+  }, [isLogin]);
 
   useEffect(() => {
     const identifier = setTimeout(() => {
@@ -38,16 +38,9 @@ function Login(props) {
         seterrorMessage(errors);
       }
     }, 500);
-    const unsubscribe = auth.onAuthStateChanged((authUser) => {
-      console.log("auth user", authUser);
-      if (authUser) {
-        dispatch({ type: LOGIN, payload: authUser });
-        history.replace("/");
-      }
-    });
+
     return () => {
       clearTimeout(identifier);
-      unsubscribe();
     };
   }, [user]);
 
@@ -97,7 +90,10 @@ function Login(props) {
             payload: respose.user,
           });
         })
-        .catch((error) => alert(error.message));
+        .catch((error) => {
+          dispatch({ type: LOGIN_FAIL });
+          alert(error.message);
+        });
       //props.dispatch(LoginThunk(user));
     }
   };
@@ -128,6 +124,7 @@ function Login(props) {
             />
             <span style={{ color: "red" }}>{errorMessage?.password}</span>
           </div>
+          <br></br>
           <button className="btn btn-primary" onClick={submit}>
             Login
           </button>
@@ -146,8 +143,8 @@ function Login(props) {
 
 const mapStateToProps = (state) => {
   return {
-    loading: state.loading,
-    isLogin: state.isLogin,
+    loading: state?.loading,
+    isLogin: state?.isLogin,
   };
 };
 

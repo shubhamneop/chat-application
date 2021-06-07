@@ -1,16 +1,16 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { connect } from "react-redux";
 import { useParams, withRouter } from "react-router";
 import "./Chat.css";
 import { auth } from "./firebase";
 import socket from "./socket/Socket";
-import { GETMESSAGE, SENDMESSAGE } from "./store/ActionType";
+import { GETMESSAGE } from "./store/ActionType";
 
 function Chat(props) {
   let inputRef;
-  //const [messages, setMessages] = useState([]);
 
   const param = useParams();
+  const messagesEndRef = useRef(null);
   const { users, messages, isLogin, dispatch, history } = props;
 
   const chatID = () => {
@@ -38,6 +38,14 @@ function Chat(props) {
     }
   }, [isLogin]);
 
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+  };
+
   const getUser = () => {
     if (users.length > 0) {
       return users.find((user) => user.id === param.id).data;
@@ -60,10 +68,6 @@ function Chat(props) {
       },
     };
     socket.emit("chat", { message, room });
-    // dispatch({
-    //   type: SENDMESSAGE,
-    //   payload: message,
-    // });
   };
   return (
     <div className="container">
@@ -123,6 +127,7 @@ function Chat(props) {
               </div>
             ),
           )}
+        <div ref={messagesEndRef} />
       </div>
       <div className="footer">
         <input
