@@ -19,7 +19,7 @@ function App(props) {
       }
     });
     return unsubscribe;
-  }, []);
+  }, [dispatch]);
   return (
     <>
       <Navbar />

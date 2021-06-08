@@ -9,7 +9,6 @@ class Register extends React.Component {
   constructor() {
     super();
     this.state = {};
-    // alert("in construction");
   }
   user = {};
 
@@ -51,12 +50,9 @@ class Register extends React.Component {
   };
 
   componentDidMount() {
-    auth.onAuthStateChanged((authUser) => {
-      console.log("auth user", authUser);
-      if (authUser) {
-        this.props.history.replace("/");
-      }
-    });
+    if (this.props.isLogin) {
+      this.props.history.replace("/");
+    }
   }
 
   submit = (event) => {
@@ -160,4 +156,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect()(withRouter(Register));
+export default connect(mapStateToProps)(withRouter(Register));

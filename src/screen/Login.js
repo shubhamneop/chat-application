@@ -2,12 +2,13 @@ import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { Link, withRouter } from "react-router-dom";
 import { auth } from "../firebase";
+import { initAction, signIn } from "../store/Action";
 import { INIT, LOGIN, LOGIN_FAIL } from "../store/ActionType";
 import Spinner from "../UI/Spinner";
 
 function Login(props) {
   const [user, setUser] = useState({});
-  const { loading, isLogin, history, dispatch } = props;
+  const { loading, isLogin, onInit, onLogin, history } = props;
 
   let getEmail = (event) => {
     setUser({ ...user, email: event.target.value });
@@ -19,7 +20,7 @@ function Login(props) {
     if (isLogin) {
       history.push("/");
     }
-  }, [isLogin]);
+  }, [isLogin, history]);
 
   useEffect(() => {
     const identifier = setTimeout(() => {
@@ -78,23 +79,8 @@ function Login(props) {
       seterrorMessage(errors);
     } else {
       seterrorMessage({});
-      console.log("user", user);
-      dispatch({
-        type: INIT,
-      });
-      auth
-        .signInWithEmailAndPassword(user.email, user.password)
-        .then((respose) => {
-          dispatch({
-            type: LOGIN,
-            payload: respose.user,
-          });
-        })
-        .catch((error) => {
-          dispatch({ type: LOGIN_FAIL });
-          alert(error.message);
-        });
-      //props.dispatch(LoginThunk(user));
+      onInit();
+      onLogin(user.email, user.password);
     }
   };
   return (
@@ -148,4 +134,11 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(withRouter(Login));
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onLogin: (email, password) => dispatch(signIn(email, password)),
+    onInit: () => dispatch(initAction()),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Login));

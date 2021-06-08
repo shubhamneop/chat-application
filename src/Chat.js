@@ -1,19 +1,22 @@
-import React, { useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { connect } from "react-redux";
 import { useParams, withRouter } from "react-router";
 import "./Chat.css";
 import { auth } from "./firebase";
 import socket from "./socket/Socket";
-import { GETMESSAGE } from "./store/ActionType";
+import SendIcon from "@material-ui/icons/Send";
+import { getMessage, sendMessage } from "./store/Action";
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 
 function Chat(props) {
   let inputRef;
 
   const param = useParams();
   const messagesEndRef = useRef(null);
-  const { users, messages, isLogin, dispatch, history } = props;
+  const { users, messages, isLogin, onGetMessage, onSendMessage, history } =
+    props;
 
-  const chatID = () => {
+  const chatID = useCallback(() => {
     const chatterID = auth.currentUser?.uid;
     const chateeID = param.id;
     const chatIDpre = [];
@@ -21,22 +24,22 @@ function Chat(props) {
     chatIDpre.push(chateeID);
     chatIDpre.sort();
     return chatIDpre.join("_");
-  };
+  }, [param.id]);
 
   useEffect(() => {
     socket.emit("join", chatID());
     socket.on("chat", (msg) => {
-      // if (msg.data.email !== auth.currentUser?.email) {
-      dispatch({ type: GETMESSAGE, payload: msg });
-      // }
+      if (msg.data.email !== auth.currentUser?.email) {
+        onGetMessage(msg);
+      }
     });
-  }, []);
+  }, [chatID]);
 
   useEffect(() => {
     if (!isLogin) {
       history.push("/login");
     }
-  }, [isLogin]);
+  }, [isLogin, history]);
 
   useEffect(() => {
     scrollToBottom();
@@ -54,8 +57,10 @@ function Chat(props) {
   };
 
   const user = getUser();
-  const sendMessage = (event) => {
-    event.preventDefault();
+  const messageData = () => {
+    if (!inputRef?.value) {
+      return;
+    }
     const room = chatID();
     const message = {
       id: Math.random().toString(),
@@ -68,6 +73,19 @@ function Chat(props) {
       },
     };
     socket.emit("chat", { message, room });
+    onSendMessage(message);
+  };
+  const sendMessage = (event) => {
+    event.preventDefault();
+    messageData();
+  };
+
+  const enterPressed = (event) => {
+    var code = event.keyCode || event.which;
+    if (code === 13) {
+      messageData();
+      inputRef.value = "";
+    }
   };
   return (
     <div className="container">
@@ -77,13 +95,15 @@ function Chat(props) {
           width="50px"
           height="50px"
           style={{ borderRadius: "50%" }}
+          alt={user?.name}
         />
         <h3>{user?.name}</h3>
         <button
           onClick={() => history.push("/")}
           className="btn btn-outline-info btn-sm my-2 my-sm-0"
+          title="Back"
         >
-          Back
+          <ArrowBackIcon />
         </button>
       </div>
       <div className="main-chat">
@@ -99,11 +119,13 @@ function Chat(props) {
                     right: -5,
                     width: "30px",
                     height: "30px",
+                    borderRadius: "50%",
                   }}
                   position="absolute"
                   bottom={-15}
                   right={-5}
-                  src={data.photoURL}
+                  src={data?.photoURL}
+                  alt={data?.displayName}
                 />
                 <p className="recieverText">{data.message}</p>
               </div>
@@ -113,14 +135,16 @@ function Chat(props) {
                   style={{
                     position: "absolute",
                     bottom: -15,
-                    left: -5,
+                    left: "0px",
                     width: "30px",
                     height: "30px",
+                    borderRadius: "50%",
                   }}
                   position="absolute"
                   bottom={-15}
                   left={-5}
                   src={data.photoURL}
+                  alt={data?.displayName}
                 />
                 <p className="senderText">{data.message}</p>
                 <p className="senderName">{data.displayName}</p>
@@ -135,6 +159,9 @@ function Chat(props) {
           placeholder=" Message..."
           type="text"
           ref={(el) => (inputRef = el)}
+          onKeyPress={(event) => {
+            enterPressed(event);
+          }}
         />
         <button
           className="btn btn-outline-success my-2 my-sm-0"
@@ -142,8 +169,9 @@ function Chat(props) {
             sendMessage(event);
             inputRef.value = "";
           }}
+          title="SEND"
         >
-          Send
+          <SendIcon />
         </button>
       </div>
     </div>
@@ -156,4 +184,11 @@ const mapStateToProps = (state) => {
     messages: state.messages,
   };
 };
-export default connect(mapStateToProps)(withRouter(Chat));
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onGetMessage: (msg) => dispatch(getMessage(msg)),
+    onSendMessage: (msg) => dispatch(sendMessage(msg)),
+  };
+};
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Chat));

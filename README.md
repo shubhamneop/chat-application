@@ -1,10 +1,19 @@
-# Getting Started with Create React App
+# Getting Started with Chat Application
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
+with help of socket io we implement the real time based chat application
+for socket server we use express,node,socket.io Open [socket server](https://github.com/shubhamneop/socket-io-server) live dev [https://shubhamsocket.herokuapp.com/](https://shubhamsocket.herokuapp.com/)
+
+for frontend used socket.io client , redux & react Live dev [https://socialbyshubham.netlify.app/](https://socialbyshubham.netlify.app/)
 
 ## Available Scripts
 
 In the project directory, you can run:
+
+### `npm install socket.io-client`
+
+include the socket io client package
 
 ### `npm start`
 
@@ -68,4 +77,13 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+### cros issue if
+
+Install this extention
+
+For crome [https://chrome.google.com/webstore/detail/allow-cors-access-control/lhobafahddgcelffkeicbaginigeejlf?hl=en](https://chrome.google.com/webstore/detail/allow-cors-access-control/lhobafahddgcelffkeicbaginigeejlf?hl=en)
+
+For Firefox [https://addons.mozilla.org/en-US/firefox/addon/access-control-allow-origin/](https://addons.mozilla.org/en-US/firefox/addon/access-control-allow-origin/)
+
 # chat-application

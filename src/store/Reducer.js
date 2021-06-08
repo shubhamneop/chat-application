@@ -58,7 +58,9 @@ const Reducer = (state = initialState, action) => {
     }
     case actionType.SENDMESSAGE: {
       state = { ...state };
-      state["messages"] = [...state.messages, action.payload];
+      let data = [...state.messages, action.payload];
+
+      state["messages"] = uniqueData(data);
       return state;
     }
     case actionType.GETMESSAGE: {
