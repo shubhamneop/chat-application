@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { Link, withRouter } from "react-router-dom";
-import { auth } from "../firebase";
 import { initAction, signIn } from "../store/Action";
-import { INIT, LOGIN, LOGIN_FAIL } from "../store/ActionType";
 import Spinner from "../UI/Spinner";
 
 function Login(props) {

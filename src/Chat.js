@@ -7,6 +7,7 @@ import socket from "./socket/Socket";
 import SendIcon from "@material-ui/icons/Send";
 import { getMessage, sendMessage } from "./store/Action";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import moment from "moment";
 
 function Chat(props) {
   let inputRef;
@@ -70,6 +71,7 @@ function Chat(props) {
         displayName: auth.currentUser?.displayName,
         message: inputRef?.value,
         photoURL: auth.currentUser?.photoURL,
+        timestamp: new Date().toISOString(),
       },
     };
     socket.emit("chat", { message, room });
@@ -128,6 +130,15 @@ function Chat(props) {
                   alt={data?.displayName}
                 />
                 <p className="recieverText">{data.message}</p>
+                <p
+                  style={{
+                    position: "absolute",
+                    bottom: -30,
+                    right: 30,
+                  }}
+                >
+                  {moment(data?.timestamp).fromNow()}
+                </p>
               </div>
             ) : (
               <div key={id} className="sender">
@@ -148,6 +159,15 @@ function Chat(props) {
                 />
                 <p className="senderText">{data.message}</p>
                 <p className="senderName">{data.displayName}</p>
+                <p
+                  style={{
+                    position: "absolute",
+                    bottom: -30,
+                    left: 35,
+                  }}
+                >
+                  {moment(data?.timestamp).fromNow()}
+                </p>
               </div>
             ),
           )}

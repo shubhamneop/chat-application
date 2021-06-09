@@ -18,6 +18,7 @@ function App(props) {
         dispatch({ type: LOGIN, payload: authUser });
       }
     });
+    document.title = "SoCIAL APP";
     return unsubscribe;
   }, [dispatch]);
   return (

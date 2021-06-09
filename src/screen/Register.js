@@ -55,6 +55,11 @@ class Register extends React.Component {
     }
   }
 
+  userImage = () => {
+    let number = Math.floor(Math.random() * (9 - 1 + 1)) + 1;
+    return `https://randomuser.me/api/portraits/lego/${number}.jpg`;
+  };
+
   submit = (event) => {
     event.preventDefault();
     var form = document.getElementById("signupform");
@@ -63,22 +68,22 @@ class Register extends React.Component {
     if (errors) {
       this.setState({ errorMessage: errors });
     } else {
+      let image = this.userImage();
       auth
         .createUserWithEmailAndPassword(this.user.email, this.user.password)
         .then((authUser) => {
           authUser.user.updateProfile({
             displayName: this.user.name,
-            photoURL:
-              "https://cencup.com/wp-content/uploads/2019/07/avatar-placeholder.png",
+            photoURL: image,
           });
           db.collection("users").doc(auth.currentUser.uid).set({
             id: auth.currentUser.uid,
             name: this.user.name,
             email: this.user.email,
-            photoURL:
-              "https://cencup.com/wp-content/uploads/2019/07/avatar-placeholder.png",
+            photoURL: image,
           });
           this.props.dispatch({ type: REGISTER, payload: authUser });
+          this.props.history.replace("/");
         })
         .catch((error) => {
           this.props.dispatch({ type: REGISTER_FAIL });
